@@ -5,6 +5,7 @@ import { logout } from "@/app/actions";
 export default async function Navbar() {
   const userCookie = await cookies().get("user");
   const user = userCookie ? JSON.parse(userCookie.value) : null;
+  const isLoggedIn = userCookie !== undefined; // Adjust this based on how you store user inf
 
   return (
     <div className="div">
@@ -51,14 +52,14 @@ export default async function Navbar() {
               <div className="relative flex items-center">
                 <input
                   type="text"
-                  className="border border-gray-300 rounded-full pl-4 pr-10 py-2 text-sm"
+                  className="border border-gray-300 rounded-full pl-4 pr-10 py-3 text-sm"
                   placeholder="Search by name"
                 />
               </div>
 
               {/* Add Recipe Button */}
               <Link
-                href="/add-recipe"
+                href={isLoggedIn ? "/add-recipe" : "/login"}
                 className="text-lg font-medium text-blue-600 hover:text-blue-800"
               >
                 + Add a Recipe
@@ -112,18 +113,51 @@ export default async function Navbar() {
       </nav>
 
       <div className="text-lg ">
-          <ul className="space-x-10 ml-[180px] py-4 ">
-          <Link href="/event" className="text-gray-600 hover:text-blue-600 font-medium">Event</Link>
-          <Link href="/popular" className="text-gray-600 hover:text-blue-600 font-medium">Popular</Link>
-          <Link href="/soup" className="text-gray-600 hover:text-blue-600 font-medium">Soup</Link>
-          <Link href="/stir-frieds" className="text-gray-600 hover:text-blue-600 font-medium">Stir Frieds</Link>
-          <Link href="/occasions" className="text-gray-600 hover:text-blue-600 font-medium">Occasions</Link>
-            <Link href="/drinks" className="text-gray-600 hover:text-blue-600 font-medium">Drinks</Link>
-            <Link href="/dessert" className="text-gray-600 hover:text-blue-600 font-medium">Dessert</Link>
-            
-          </ul>
+        <ul className="space-x-10 ml-[180px] py-4 ">
+          <Link
+            href="/event"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Event
+          </Link>
+          <Link
+            href="/popular"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Popular
+          </Link>
+          <Link
+            href="/soup"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Soup
+          </Link>
+          <Link
+            href="/stir-frieds"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Stir Frieds
+          </Link>
+          <Link
+            href="/occasions"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Occasions
+          </Link>
+          <Link
+            href="/drinks"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Drinks
+          </Link>
+          <Link
+            href="/dessert"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
+            Dessert
+          </Link>
+        </ul>
       </div>
-
     </div>
   );
 }

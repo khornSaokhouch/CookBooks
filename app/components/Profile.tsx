@@ -16,42 +16,36 @@ const Profile: React.FC = async () => {
 
   return (
     <div className="container mx-auto px-10 py-10">
-      <h1 className="text-3xl font-bold mb-6">My Profile</h1>
-      <div className="flex space-x-8">
+      <h1 className="text-3xl font-bold mb-6 ml-[100px] ">My Profile</h1>
+      <div className="flex justify-center space-x-8">
         {/* Sidebar */}
-        <div className="w-1/4 py-5">
-          <ul className="list-none pl-0 bg-white rounded-lg p-4 shadow-md">
-            <li className="mb-2">
-              <Link href="/edit-profile" className="block text-blue-600  p-2 rounded hover:bg-slate-300">
-                Edit My Profile
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/my-recipes" className="block text-blue-600  p-2 rounded hover:bg-slate-300">
-                My Recipes
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/save" className="block text-blue-600  p-2 rounded hover:bg-slate-300">
-                Save
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/reset-password" className="block text-blue-600  p-2 rounded hover:bg-slate-300">
-                Reset Password
-              </Link>
-            </li>
-            <li>
-              <Link href="/log-out" className="block text-blue-600  p-2 rounded hover:bg-slate-300">
-                Log Out
-              </Link>
-            </li>
+        <nav className="mt-8">
+          <ul className="space-y-4">
+            {[
+              { href: "/", label: "Home", icon: "home", active: true  },
+              { href: "/edit-profile", label: "Edit Profile", icon: "edit" },
+              { href: "/my-recipes", label: "My Recipes", icon: "work"},
+              { href: "/reset-password", label: "Reset Password", icon: "lock" },
+              { href: "/save", label: "Save", icon: "save" },
+            ].map(({ href, label, icon, active }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`flex items-center px-6 py-3 rounded-lg ${
+                    active ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <span className="material-icons mr-3">{icon}</span>
+                  {label}
+                </Link>
+              </li>
+            ))}
           </ul>
-        </div>
+        </nav>
         {/* Profile Information */}
-        <div className="w-3/4 bg-white rounded-lg shadow-lg p-4">
+        <div className="w-3/4 bg-white rounded-lg shadow-lg flex flex-col p-4">
           {user ? (
-            <div className="flex items-center mb-6">
+            <div className="flex items-center p-6">
               <Image
                 src="/profile.png" // Replace with the path to the user's image
                 alt="User Avatar"
@@ -67,18 +61,18 @@ const Profile: React.FC = async () => {
           ) : (
             <p className="text-gray-700">Loading user information...</p>
           )}
-          <h2 className="text-lg font-semibold mt-4">About Me</h2>
-          <p className="mt-2">
+          <h2 className="text-2xl font-semibold mt-4 px-10 ">About Me</h2>
+          <p className="mt-2 text-center">
             Hello everyone, my name is {user?.name || 'User'}. It's a pleasure to meet you all! 
             A little bit about myself: I am [age] years old and currently work as [your job/occupation]. 
             In my free time, I enjoy {user?.hobbies && user.hobbies.length > 0 ? user.hobbies.join(', ') : 'various activities'}.
           </p>
-          <p className="mt-2">
+          <p className="mt-2 ">
             I'm excited to be here today and look forward to the pleasure of interaction—getting to know everyone, 
             learning new things, and collaborating on projects. Please feel free to ask me any questions you may have— 
             I'm always happy to chat and share a bit more about myself.
           </p>
-          <p className="mt-2">Thank you for your time, and I look forward to our discussions!</p>
+          <p className="mt-2 ">Thank you for your time, and I look forward to our discussions!</p>
         </div>
       </div>
     </div>

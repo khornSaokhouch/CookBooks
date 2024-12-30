@@ -1,13 +1,13 @@
 import Footer from "../components/Footer"
 import Navbar from "../components/Navbar"
-import Profile from "../components/Profile"
+import AddRecipe from "../components/AddRecipe"
 
-export default function profile () {
+export default function AddRecipePage () {
     return (
         <div>
             <Navbar />
-            <div className="">
-            <Profile/>
+            <div className="py-5">
+            <AddRecipe />
             </div>
             <Footer />
         </div>

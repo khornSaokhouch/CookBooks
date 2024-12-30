@@ -22,7 +22,7 @@ export default function RootLayout({
     rel="stylesheet"
   />
 </head>
-      <body className="antialiased bg-gray-50 text-gray-900">
+      <body className="antialiased bg-white text-gray-900">
         <main >{children}</main>
       </body>
     </html>
