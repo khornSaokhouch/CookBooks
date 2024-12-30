@@ -4,7 +4,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Footer: React.FC = () => {
   return (
-    <section className="footer-container px-20 py-10 border-t-2 border-b-2 border-blue-300 mb-2">
+    <section className="footer-container px-20 py-20 border-t-2 border-b-2 border-blue-300 mb-2">
       <div className="container mx-auto flex flex-wrap justify-between">
         <div className="footer-menu flex flex-col items-start">
           <ul className="flex list-none text-base text-ml">
