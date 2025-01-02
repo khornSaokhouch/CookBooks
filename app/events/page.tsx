@@ -70,6 +70,10 @@ export default async function EventsPage() {
         
         <h1 className="text-2xl font-semibold mb-4">Events Management</h1>
         <p>Manage events here. This section will allow you to create, update, or delete events.</p>
+        <div className="flex mt-8 items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300 w-[500px] h-[200px]">
+  <button className="text-orange-500 text-lg font-medium">+ Add Event</button>
+</div>
+
       </main>
     </div>
   );

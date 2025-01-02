@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { query } from "@/app/db";
 import Link from "next/link";
 
+
 async function getDashboardStats() {
   try {
     const [userCountResult, recipeCountResult] = await Promise.all([
@@ -97,49 +98,87 @@ export default async function Dashboard() {
           </div>
         </header>
 
+{/* Greeting and Action Buttons */}
+<section
+  className="mb-8 bg-cover bg-center rounded-lg p-8 h-[250px]"
+  style={{ backgroundImage: "url('/banner.png')" }}
+>
+  <h1 className="text-4xl font-semibold text-black mb-2 ">Hello, {user.name}</h1>
+  <p className="text-black mb-4">
+    Get <a className="text-orange-400 font-medium text-lg">FREE delivery</a> on every weekend.
+  </p>
+  <div className="flex space-x-4 my-12">
+    <Link href="/post-event" className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+      + Post Events
+    </Link>
+    <Link href="/events" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">
+      Check Events
+    </Link>
+  </div>
+</section>
+
+
         {/* Dashboard Stats */}
-        <section>
-          <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Dashboard Stats</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white p-4 shadow rounded-lg">
-              <h2 className="text-lg font-medium">Users</h2>
+              <h3 className="text-lg font-medium">Users</h3>
               <p className="text-3xl font-bold">{userCount}</p>
             </div>
             <div className="bg-white p-4 shadow rounded-lg">
-              <h2 className="text-lg font-medium">Recipes</h2>
+              <h3 className="text-lg font-medium">Recipes</h3>
               <p className="text-3xl font-bold">{recipeCount}</p>
             </div>
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto p-6">
-      <header className="bg-gray-100 p-5 rounded-lg text-center">
-        <h1 className="text-xl font-semibold">Hello, Austine Robertson</h1>
-        <p className="text-gray-600">Get FREE delivery on every weekend.</p>
-        <button className="bg-blue-500 text-white py-2 px-4 rounded mt-4 mr-2 hover:bg-blue-600">+ Post Events</button>
-        <button className="border border-blue-500 text-blue-500 py-2 px-4 rounded mt-4 hover:bg-blue-500 hover:text-white">Check Events</button>
-      </header>
       
-      <section className="my-8">
-        <h2 className="text-lg font-semibold mb-4">Recipe Category</h2>
-        <div className="flex justify-center gap-4">
-          <div className="bg-gray-200 p-3 rounded text-center">Soup</div>
-          <div className="bg-gray-200 p-3 rounded text-center">Stir fries</div>
-          <div className="bg-gray-200 p-3 rounded text-center">Drinks</div>
-          <div className="bg-gray-200 p-3 rounded text-center">Desserts</div>
+      <div className="flex items-center bg-gray-100  justify-evenly ">
+      {/* Recipe Categories Section */}
+      <section className="mb-8 w-full">
+        <h2 className="text-2xl font-semibold mb-4">Recipe Category</h2>
+        <div className="flex justify-between items-center">
+          <div className="flex space-x-4 overflow-x-auto">
+            {['Soup', 'Stir Fried', 'Drinks', 'Desserts'].map((category) => (
+              <div key={category} className="bg-white rounded-lg shadow-md p-4 text-center">
+                <img
+                  src="/soup.png" // Use your local image
+                  alt={category}
+                  className="mx-auto mb-2 h-12 w-12"
+                />
+                <h3 className="font-medium">{category}</h3>
+                <Link href={`/recipes?category=${category.toLowerCase()}`} className="text-blue-600 hover:underline">
+                  View All
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Occasion</h2>
-        <div className="flex justify-center gap-4">
-          <div className="bg-gray-200 p-3 rounded text-center">Birthday</div>
-          <div className="bg-gray-200 p-3 rounded text-center">Phchum ben</div>
-          <div className="bg-gray-200 p-3 rounded text-center">Luna New Year</div>
+      {/* Occasion Section */}
+      <section className="w-full mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Occasion</h2>
+        <div className="flex justify-between items-center">
+          <div className="flex space-x-4 overflow-x-auto">
+            {['Birthday', 'Pchum Ben', 'Luna New Year'].map((occasion) => (
+              <div key={occasion} className="bg-white rounded-lg shadow-md p-4 text-center">
+                <img
+                  src="/drinks.png" // Use the same local image
+                  alt={occasion}
+                  className="mx-auto mb-2 h-12 w-12"
+                />
+                <h3 className="font-medium">{occasion}</h3>
+                <Link href={`/recipes?occasion=${occasion.toLowerCase()}`} className="text-blue-600 hover:underline">
+                  View All
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>
-
       </main>
     </div>
   );

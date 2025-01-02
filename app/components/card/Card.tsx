@@ -15,7 +15,7 @@ const RecipeCard = ({ title, cookingTime, rating, image }: RecipeData) => {
             <div className="relative h-48">
                 <img className="w-full h-full object-cover" src={image} alt={title} />
                 <Link href="/save-recipe" className="absolute top-1 left-2">
-                    <FaBookmark className='h-[50px] w-[30px] text-white hover:text-black' />
+                    <FaBookmark className='h-[50px] w-[30px] text-white hover:text-blue-600' />
                 </Link>
             </div>
             <div className="p-4 h-32 flex flex-col justify-between">
