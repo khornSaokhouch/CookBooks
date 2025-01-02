@@ -28,19 +28,19 @@ export default async function Navbar() {
             <div className="hidden md:flex space-x-10 text-lg">
               <Link
                 href="/"
-                className="text-gray-600 hover:text-gray-800 font-medium"
+                className="text-gray-600 hover:text-blue-600 font-medium"
               >
                 Home
               </Link>
               <Link
                 href="/recipe"
-                className="text-gray-600 hover:text-gray-800 font-medium"
+                className="text-gray-600 hover:text-blue-600 font-medium"
               >
                 Recipe
               </Link>
               <Link
                 href="/about"
-                className="text-gray-600 hover:text-gray-800 font-medium"
+                className="text-gray-600 hover:text-blue-600 font-medium"
               >
                 About Us
               </Link>
@@ -52,7 +52,7 @@ export default async function Navbar() {
               <div className="relative flex items-center">
                 <input
                   type="text"
-                  className="border border-gray-300 rounded-full pl-4 pr-10 py-3 text-sm"
+                  className="border border-gray-500 rounded-full pl-4 pr-10 py-3 text-sm"
                   placeholder="Search by name"
                 />
               </div>
@@ -70,7 +70,7 @@ export default async function Navbar() {
                 {user && (
                   <>
                     {/* Save/Favorites Button - Only for Logged-in Users */}
-                    <Link href="/favorites" className="hover:text-gray-700">
+                    <Link href="/save" className="hover:text-gray-700">
                       <span className="material-icons text-gray-600 w-5 h-5">
                         bookmark_border
                       </span>

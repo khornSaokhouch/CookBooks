@@ -1,8 +1,8 @@
-'use client'; // Add this line to designate the component as a Client Component
+"use client"; // Add this line to designate the component as a Client Component
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 interface User {
   name: string;
@@ -23,8 +23,10 @@ const Edit: React.FC = () => {
 
   useEffect(() => {
     // Get the user data from localStorage on the client side
-    const userDataString = localStorage.getItem('user');
-    const userData: User | null = userDataString ? JSON.parse(userDataString) : null;
+    const userDataString = localStorage.getItem("user");
+    const userData: User | null = userDataString
+      ? JSON.parse(userDataString)
+      : null;
 
     if (userData) {
       setUser(userData);
@@ -58,17 +60,30 @@ const Edit: React.FC = () => {
         {/* Sidebar */}
         <nav className="mt-8">
           <ul className="space-y-4">
-            {[ 
+            {[
               { href: "/profile", label: "Home", icon: "home" },
-              { href: "/edit-profile", label: "Edit Profile", icon: "edit", active: true },
+              {
+                href: "/edit-profile",
+                label: "Edit Profile",
+                icon: "edit",
+                active: true,
+              },
               { href: "/my-recipes", label: "My Recipes", icon: "work" },
-              { href: "/reset-password", label: "Reset Password", icon: "lock" },
+              {
+                href: "/reset-password",
+                label: "Reset Password",
+                icon: "lock",
+              },
               { href: "/save", label: "Save", icon: "save" },
             ].map(({ href, label, icon, active }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`flex items-center px-6 py-3 rounded-lg ${active ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-200"}`}
+                  className={`flex items-center px-6 py-3 rounded-lg ${
+                    active
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`}
                 >
                   <span className="material-icons mr-3">{icon}</span>
                   {label}
@@ -101,24 +116,30 @@ const Edit: React.FC = () => {
           <h2 className="text-2xl font-semibold mt-4 px-10">Edit Profile</h2>
 
           <form onSubmit={handleSubmit} className="px-10 py-6">
-            <div className="mb-4">
-              <label className="block text-sm font-semibold mb-2">First Name</label>
-              <input
-                type="text"
-                ref={firstNameRef}
-                className="w-full border border-gray-300 rounded-md p-2"
-                required
-                defaultValue={user?.name} // Pre-fill the form fields if user data exists
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-semibold mb-2">Last Name</label>
-              <input
-                type="text"
-                ref={lastNameRef}
-                className="w-full border border-gray-300 rounded-md p-2"
-                required
-              />
+            <div className="flex space-x-16">
+              <div className="mb-4">
+                <label className="block text-sm font-semibold mb-2">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  ref={firstNameRef}
+                  className="w-[450px] border border-gray-300 rounded-md p-2 "
+                  required
+                  defaultValue={user?.name} // Pre-fill the form fields if user data exists
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-semibold mb-2">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  ref={lastNameRef}
+                  className="w-[450px] border border-gray-300 rounded-md p-2 "
+                  required
+                />
+              </div>
             </div>
             <div className="mb-4">
               <label className="block text-sm font-semibold mb-2">Email</label>
@@ -131,21 +152,25 @@ const Edit: React.FC = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-semibold mb-2">About Me</label>
+              <label className="block text-sm font-semibold mb-2">
+                About Me
+              </label>
               <textarea
                 ref={aboutMeRef}
                 className="w-full border border-gray-300 rounded-md p-2"
                 placeholder="Tell us about yourself"
                 rows={4}
-                defaultValue={user ? 'Your current description goes here' : ''} // Pre-fill About Me field
+                defaultValue={user ? "Your current description goes here" : ""} // Pre-fill About Me field
               />
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-            >
-              Update Profile
-            </button>
+            <div className="flex justify-end mt-4">
+    <button
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+    >
+        Update Profile
+    </button>
+</div>
           </form>
         </div>
       </div>

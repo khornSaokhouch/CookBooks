@@ -1,5 +1,6 @@
 "use client";
 
+import RecipeModal from "./RecipeModal";
 import { useState, ChangeEvent, FormEvent } from "react";
 
 const AddRecipe = () => {
@@ -52,6 +53,12 @@ const AddRecipe = () => {
       setBannerImage(file);
       setBannerPreview(URL.createObjectURL(file));
     }
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleNextClick = () => {
+      setIsModalOpen(true);
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -338,13 +345,17 @@ const AddRecipe = () => {
 
         {/* Submit Button */}
         <div className="text-right">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-          >
-            Next
-          </button>
-        </div>
+                <button
+                    type="button" // Change type to "button" to prevent form submission
+                    onClick={handleNextClick}
+                    className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                    Next
+                </button>
+            </div>
+
+            {/* Recipe Modal */}
+            <RecipeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </form>
     </div>
   );
