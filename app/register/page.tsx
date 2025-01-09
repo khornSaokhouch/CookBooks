@@ -6,23 +6,37 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsLoading(true); // Set loading state to true
+    setError(''); // Clear any previous errors
+
     const formData = new FormData(event.currentTarget);
-    const result = await register(formData);
-    if (result && result.error) {
-      setError(result.error);
-    } else {
-      router.push('/login');
+
+    try {
+      const result = await register(formData);
+
+      if (result && result.error) {
+        setError(result.error); // Display error message
+      } else if (result && result.success) {
+        router.push('/login'); // Redirect to login page on success
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        {/* Form Header */}
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Create Your Account</h1>
         {error && (
           <p className="text-red-500 text-center mb-4 bg-red-100 border border-red-300 py-2 px-4 rounded-md">
@@ -30,9 +44,7 @@ export default function RegisterPage() {
           </p>
         )}
 
-        {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name Field */}
           <div>
             <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
               Full Name
@@ -47,7 +59,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
               Email Address
@@ -62,7 +73,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Password Field */}
           <div>
             <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
               Password
@@ -77,16 +87,15 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            disabled={isLoading} // Disable button when loading
+            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Register
+            {isLoading ? 'Registering...' : 'Register'} {/* Show loading text */}
           </button>
         </form>
 
-        {/* Redirect to Login */}
         <p className="mt-6 text-center text-gray-600">
           Already have an account?{' '}
           <a href="/login" className="text-blue-500 hover:underline">
