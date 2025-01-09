@@ -12,10 +12,10 @@ const Footer: React.FC = () => {
               <Link href="#" className="hover:text-blue-600">ABOUT US</Link>
             </li>
             <li className="px-6">
-              <Link href="#" className="hover:text-blue-600">CONTACT US</Link>
+              <Link href="/contact-us" className="hover:text-blue-600">CONTACT US</Link>
             </li>
             <li className="px-6">
-              <Link href="#" className="hover:text-blue-600">FAQ</Link>
+              <Link href="/faq" className="hover:text-blue-600">FAQ</Link>
             </li>
             <li className="px-6">
               <Link href="#" className="hover:text-blue-600">PRIVACY POLICY</Link>

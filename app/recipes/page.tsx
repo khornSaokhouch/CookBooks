@@ -1,38 +1,69 @@
+// app/recipes/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { query } from "@/app/db";
+import Link from "next/link";
+import Image from "next/image";
+
+// Fetch recipe categories from the database
+async function getCategories() {
+  try {
+    const categories = await query("SELECT * FROM categories", []);
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [];
+  }
+}
+
+// Fetch occasions from the database
+async function getOccasions() {
+  try {
+    const occasions = await query("SELECT * FROM occasions", []);
+    return occasions;
+  } catch (error) {
+    console.error("Error fetching occasions:", error);
+    return [];
+  }
+}
 
 export default async function RecipesPage() {
   const userCookie = cookies().get("user");
 
+  // Redirect if user is not logged in
   if (!userCookie) {
     redirect("/login");
   }
 
-  const user = JSON.parse(userCookie.value);
+  let user;
+  try {
+    user = JSON.parse(userCookie.value);
+  } catch (e) {
+    console.error("Error parsing user cookie:", e);
+    redirect("/login");
+  }
 
+  // Redirect if user is not an admin
   if (!user.is_admin) {
     redirect("/");
   }
 
-  const categories = [
-    { name: "Soup", image: "/soup.png" },
-    { name: "Stir fries", image: "/burger.png" },
-    { name: "Drinks", image: "/drinks.png" },
-    { name: "Desserts", image: "/salad.png" },
-  ];
-
-  const occasions = [
-    { name: "Birthday", image: "/salad.png" },
-    { name: "Pchum Ben", image: "/drinks.png" },
-    { name: "Luna New Year", image: "/burger.png" },
-  ];
+  // Fetch categories and occasions from the database
+  const categories = await getCategories();
+  const occasions = await getOccasions();
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md">
         <div className="p-4 text-center">
-          <img src="/logo.png" alt="CookBook Logo" className="w-[90px] mx-auto" />
+          <Image
+            src="/logo.png"
+            alt="CookBook Logo"
+            width={90}
+            height={90}
+            className="mx-auto"
+          />
         </div>
         <nav className="mt-8">
           <ul className="space-y-4">
@@ -44,7 +75,7 @@ export default async function RecipesPage() {
               { href: "/events", label: "Events", icon: "event" },
             ].map(({ href, label, icon }) => (
               <li key={href}>
-                <a
+                <Link
                   href={href}
                   className={`flex items-center px-6 py-3 rounded-lg ${
                     href === "/recipes"
@@ -54,7 +85,7 @@ export default async function RecipesPage() {
                 >
                   <span className="material-icons mr-3">{icon}</span>
                   {label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -71,110 +102,102 @@ export default async function RecipesPage() {
             className="border border-gray-300 rounded-lg w-full max-w-md px-4 py-2"
           />
           <div className="flex items-center space-x-4">
-            {/* Replace the default profile image with the uploaded image */}
-            <img
-              src="/profile.png" // Change this to the correct filename if needed
+            <Image
+              src="/profile.png"
               alt="Admin Avatar"
-              className="w-10 h-10 rounded-full"
+              width={40}
+              height={40}
+              className="rounded-full"
             />
             <span className="font-medium">{user.name}</span>
           </div>
         </header>
 
         <div className="bg-gray-50 min-h-screen p-8">
-      {/* Header */}
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Recipes Management</h1>
-        <p className="text-gray-600">
-          Manage recipes here. Add, edit, or remove recipes from the system.
-        </p>
-      </header>
+          {/* Header */}
+          <header className="mb-8">
+            <h1 className="text-3xl font-bold mb-4">Recipes Management</h1>
+            <p className="text-gray-600">
+              Manage recipes here. Add, edit, or remove recipes from the system.
+            </p>
+          </header>
 
-      {/* Recipe Category Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Recipe Category</h2>
-        <div className="grid grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <div
-              key={category.name}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-20 h-20 mx-auto mb-4"
-              />
-              <h3 className="text-lg font-semibold text-center mb-2">
-                {category.name}
-              </h3>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg block mx-auto">
-                View
-              </button>
+          {/* Recipe Category Section */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold mb-6">Recipe Category</h2>
+            <div className="grid grid-cols-4 gap-6">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
+                >
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 mx-auto mb-4"
+                  />
+                  <h3 className="text-lg font-semibold text-center mb-2">
+                    {category.name}
+                  </h3>
+                  <Link
+                    href={`/recipes/category/${category.id}`}
+                    className="bg-orange-500 text-white px-4 py-2 rounded-lg block mx-auto text-center"
+                  >
+                    View
+                  </Link>
+                </div>
+              ))}
+              <div className="flex items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300">
+                <Link
+                  href="/recipes/add-category"
+                  className="text-orange-500 text-lg font-medium"
+                >
+                  + Add Category
+                </Link>
+              </div>
             </div>
-          ))}
-          <div className="flex items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300">
-            <button className="text-orange-500 text-lg font-medium">+ Add Category</button>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Occasion Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Occasion</h2>
-        <div className="grid grid-cols-4 gap-6">
-          {occasions.map((occasion) => (
-            <div
-              key={occasion.name}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <img
-                src={occasion.image}
-                alt={occasion.name}
-                className="w-20 h-20 mx-auto mb-4"
-              />
-              <h3 className="text-lg font-semibold text-center mb-2">
-                {occasion.name}
-              </h3>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg block mx-auto">
-                View
-              </button>
+          {/* Occasion Section */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold mb-6">Occasion</h2>
+            <div className="grid grid-cols-4 gap-6">
+              {occasions.map((occasion) => (
+                <div
+                  key={occasion.id}
+                  className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
+                >
+                  <Image
+                    src={occasion.image}
+                    alt={occasion.name}
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 mx-auto mb-4"
+                  />
+                  <h3 className="text-lg font-semibold text-center mb-2">
+                    {occasion.name}
+                  </h3>
+                  <Link
+                    href={`/recipes/occasion/${occasion.id}`}
+                    className="bg-orange-500 text-white px-4 py-2 rounded-lg block mx-auto text-center"
+                  >
+                    View
+                  </Link>
+                </div>
+              ))}
+              <div className="flex items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300">
+                <Link
+                  href="/recipes/add-occasion"
+                  className="text-orange-500 text-lg font-medium"
+                >
+                  + Add Occasion
+                </Link>
+              </div>
             </div>
-          ))}
-          <div className="flex items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300">
-            <button className="text-orange-500 text-lg font-medium">+ Add Occasion</button>
-          </div>
+          </section>
         </div>
-      </section>
-
-      {/* Events Section */}
-      <section>
-        <h2 className="text-2xl font-bold mb-6">Events</h2>
-        <div className="grid grid-cols-4 gap-6">
-          {occasions.map((event) => (
-            <div
-              key={event.name}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <img
-                src={event.image}
-                alt={event.name}
-                className="w-20 h-20 mx-auto mb-4"
-              />
-              <h3 className="text-lg font-semibold text-center mb-2">
-                {event.name}
-              </h3>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg block mx-auto">
-                View
-              </button>
-            </div>
-          ))}
-          <div className="flex items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300">
-            <button className="text-orange-500 text-lg font-medium">+ Add Event</button>
-          </div>
-        </div>
-      </section>
-    </div>
-
       </main>
     </div>
   );

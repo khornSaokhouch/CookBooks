@@ -39,7 +39,7 @@ export default async function Navbar() {
                 Recipe
               </Link>
               <Link
-                href="/about"
+                href="/about-us"
                 className="text-gray-600 hover:text-blue-600 font-medium"
               >
                 About Us

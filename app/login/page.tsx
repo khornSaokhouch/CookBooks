@@ -6,16 +6,33 @@ import { login } from '@/app/actions';
 
 export default function LoginPage() {
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsLoading(true); // Set loading state to true
+    setError(''); // Clear any previous errors
+
     const formData = new FormData(event.currentTarget);
-    const result = await login(formData);
-    if (result && result.error) {
-      setError(result.error);
+
+    try {
+      const result = await login(formData);
+
+      if (result && result.error) {
+        setError(result.error); // Display error message
+      } else if (result && result.success) {
+        // Redirect based on the response from the server
+        router.push(result.redirect || '/'); // Default to '/' if no redirect path is provided
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
-    // Redirection is handled by the server action
   }
 
   return (
@@ -64,9 +81,10 @@ export default function LoginPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            disabled={isLoading} // Disable button when loading
+            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
           </button>
         </form>
 
