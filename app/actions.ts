@@ -27,26 +27,32 @@ export async function login(formData: FormData) {
   // Admin login
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
     console.log('Admin login successful.'); // Debug log
-    await cookies().set('user', JSON.stringify({
-      id: 'admin',
-      name: 'Admin',
-      email: ADMIN_EMAIL,
-      is_admin: true,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-    });
-
-    return redirect('/dashboard');
+    try {
+      await cookies().set('user', JSON.stringify({
+        id: 'admin',
+        user_name: 'Admin',
+        email: ADMIN_EMAIL,
+        role: 'Admin',
+      }), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
+      console.log('Admin cookie set successfully.'); // Debug log
+      return redirect('/dashboard');
+    } catch (error) {
+      console.error('Failed to set admin cookie:', error); // Debug log
+      return { error: 'Failed to set admin cookie. Please try again.' };
+    }
   }
 
   // Regular user login
   let user;
   try {
     console.log('Fetching user from database...'); // Debug log
-    const users = await query('SELECT * FROM users WHERE email = ?', [email]) as any[];
+    const users = await query('SELECT * FROM user WHERE email = ?', [email]) as any[];
+    console.log('Query result:', users); // Debug log
     user = users[0];
 
     if (!user) {
@@ -62,26 +68,30 @@ export async function login(formData: FormData) {
     }
 
     console.log('Password match successful.'); // Debug log
-    await cookies().set('user', JSON.stringify({
-      id: user.id.toString(),
-      name: user.name,
-      email: user.email,
-      is_admin: user.is_admin,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-    });
-
-    console.log('Cookie set successfully.'); // Debug log
+    try {
+      await cookies().set('user', JSON.stringify({
+        id: user.user_id.toString(),
+        user_name: user.user_name,
+        email: user.email,
+        role: user.role,
+      }), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
+      console.log('Cookie set successfully.'); // Debug log
+    } catch (error) {
+      console.error('Failed to set cookie:', error); // Debug log
+      return { error: 'Failed to set cookie. Please try again.' };
+    }
   } catch (error) {
     console.error('Login error:', error); // Debug log
     return { error: 'An error occurred during login. Please try again.' };
   }
 
   // Redirect based on user role
-  if (user.is_admin) {
+  if (user.role === 'Admin') {
     console.log('Redirecting to /dashboard'); // Debug log
     return redirect('/dashboard');
   } else {
@@ -91,13 +101,13 @@ export async function login(formData: FormData) {
 }
 
 export async function register(formData: FormData) {
-  const name = formData.get('name') as string;
+  const user_name = formData.get('name') as string; // Use `user_name` instead of `name`
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  console.log('Registration attempt:', { name, email, password }); // Debug log
+  console.log('Registration attempt:', { user_name, email, password }); // Debug log
 
-  if (!name || !email || !password) {
+  if (!user_name || !email || !password) {
     console.log('All fields are required.'); // Debug log
     return { error: 'All fields are required.' };
   }
@@ -106,18 +116,17 @@ export async function register(formData: FormData) {
 
   try {
     console.log('Checking if email already exists...'); // Debug log
-    const existingUser = await query('SELECT * FROM users WHERE email = ?', [email]);
+    const existingUser = await query('SELECT * FROM user WHERE email = ?', [email]);
     if (existingUser.length > 0) {
       console.log('Email already exists.'); // Debug log
       return { error: 'Email already exists. Please use a different email.' };
     }
 
     console.log('Inserting new user into the database...'); // Debug log
-    await query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [
-      name,
-      email,
-      hashedPassword,
-    ]);
+    await query(
+      'INSERT INTO user (user_name, email, password, role, is_active) VALUES (?, ?, ?, ?, ?)',
+      [user_name, email, hashedPassword, 'User', true]
+    );
 
     console.log('Registration successful.'); // Debug log
     return { success: true };
