@@ -51,7 +51,7 @@ export default function LoginPage() {
           {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-              Email Address
+              Email
             </label>
             <input
               type="email"
@@ -92,7 +92,7 @@ export default function LoginPage() {
         <p className="mt-6 text-center text-gray-600">
           Don&apos;t have an account?{' '}
           <a href="/register" className="text-blue-500 hover:underline">
-            Register here
+            Register
           </a>
         </p>
       </div>

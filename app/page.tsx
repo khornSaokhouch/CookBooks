@@ -6,10 +6,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Card from "./components/card/Card"; // Make sure the path is correct
 import BannerSwiper from "./components/slider";
 
-
-
-export default function HomePage() {
-  const userCookie = cookies().get("user")?.value;
+export default async function HomePage() {
+  const cookieStore = cookies(); // Await the cookies() API
+  const userCookie = cookieStore.get("user")?.value; // Use the cookie store to get the user cookie
   const user = userCookie ? JSON.parse(userCookie) : null;
 
   const recipes = [
@@ -91,8 +90,8 @@ export default function HomePage() {
   return (
     <div>
       <Navbar />
-      <div className="px-20 rounded-3xl"><BannerSwiper/></div>
-      
+      <div className="px-20 rounded-3xl"><BannerSwiper /></div>
+
       <div className=" p-4 flex justify-between items-center max-w-6xl mx-auto ">
         <div className="flex flex-col">
           <h1 className="text-4xl font-bold mb-4">New Post</h1>

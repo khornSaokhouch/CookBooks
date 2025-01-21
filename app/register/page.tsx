@@ -47,7 +47,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-              Full Name
+              Name
             </label>
             <input
               type="text"
@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-              Email Address
+              Email
             </label>
             <input
               type="email"
@@ -99,7 +99,7 @@ export default function RegisterPage() {
         <p className="mt-6 text-center text-gray-600">
           Already have an account?{' '}
           <a href="/login" className="text-blue-500 hover:underline">
-            Log in here
+            Log in 
           </a>
         </p>
       </div>

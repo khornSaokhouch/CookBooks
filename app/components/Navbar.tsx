@@ -3,9 +3,10 @@ import { cookies } from "next/headers";
 import { logout } from "@/app/actions";
 
 export default async function Navbar() {
-  const userCookie = await cookies().get("user");
+  const cookieStore = cookies(); // Await the cookies() API
+  const userCookie = cookieStore.get("user"); // Use the cookie store to get the user cookie
   const user = userCookie ? JSON.parse(userCookie.value) : null;
-  const isLoggedIn = userCookie !== undefined; // Adjust this based on how you store user inf
+  const isLoggedIn = !!user; // Check if user is logged in
 
   return (
     <div className="div">
@@ -19,7 +20,7 @@ export default async function Navbar() {
                 <img
                   src="/logo.png"
                   alt="CookBook Logo"
-                  className="w-[50px] h-[50px] md:w-[70px] md:h-[70px] object-contain "
+                  className="w-[50px] h-[50px] md:w-[70px] md:h-[70px] object-contain"
                 />
               </Link>
             </div>
@@ -67,7 +68,7 @@ export default async function Navbar() {
 
               {/* Profile or Login Button */}
               <div className="flex items-center space-x-4">
-                {user && (
+                {isLoggedIn && (
                   <>
                     {/* Save/Favorites Button - Only for Logged-in Users */}
                     <Link href="/save" className="hover:text-gray-700">
@@ -79,14 +80,14 @@ export default async function Navbar() {
                     {/* Profile Avatar */}
                     <Link href="/profile">
                       <img
-                        src={user.avatar || "/default-avatar.png"}
+                        src={user?.avatar || "/default-avatar.png"} // Use optional chaining
                         alt="Profile"
                         className="w-10 h-10 rounded-full border border-gray-300"
                       />
                     </Link>
 
                     {/* Logout Button */}
-                    <form action={logout} method="POST">
+                    <form action={logout}>
                       <button
                         type="submit"
                         className="bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 transition"
@@ -97,7 +98,7 @@ export default async function Navbar() {
                   </>
                 )}
 
-                {!user && (
+                {!isLoggedIn && (
                   // Login Button for Guests
                   <Link
                     href="/login"
@@ -112,8 +113,9 @@ export default async function Navbar() {
         </div>
       </nav>
 
-      <div className="text-lg ">
-        <ul className="space-x-10 ml-[180px] py-4 ">
+      {/* Secondary Navigation Links */}
+      <div className="text-lg">
+        <ul className="space-x-10 ml-[180px] py-4">
           <Link
             href="/event"
             className="text-gray-600 hover:text-blue-600 font-medium"
