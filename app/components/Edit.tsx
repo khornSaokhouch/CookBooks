@@ -119,7 +119,7 @@ const Edit: React.FC = () => {
             <div className="flex space-x-16">
               <div className="mb-4">
                 <label className="block text-sm font-semibold mb-2">
-                  First Name
+                  Name
                 </label>
                 <input
                   type="text"
@@ -127,17 +127,6 @@ const Edit: React.FC = () => {
                   className="w-[450px] border border-gray-300 rounded-md p-2 "
                   required
                   defaultValue={user?.name} // Pre-fill the form fields if user data exists
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  ref={lastNameRef}
-                  className="w-[450px] border border-gray-300 rounded-md p-2 "
-                  required
                 />
               </div>
             </div>
