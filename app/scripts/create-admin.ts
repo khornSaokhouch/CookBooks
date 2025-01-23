@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt';
 import { query } from '@/app/lib/db';
 
 async function createAdminUser() {
-  const adminEmail = 'admin@gmail.com'; // Replace with your admin email
-  const adminPassword = '1234'; // Replace with your chosen strong password
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'; // Use environment variable
+  const adminPassword = process.env.ADMIN_PASSWORD || '123'; // Use environment variable
   const adminName = 'Admin';
 
   const saltRounds = 10;
