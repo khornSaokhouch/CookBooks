@@ -14,7 +14,7 @@ interface User {
 
 const Profile = async () => {
   // Get the user ID from the cookie
-  const userCookie = cookies().get("user"); // Await the cookies() function
+  const userCookie = (await cookies()).get("user"); // Await the cookies() function
   console.log("User cookie:", userCookie); // Debug log
 
   let userData = null;
@@ -61,20 +61,17 @@ const Profile = async () => {
   return (
     <div className="container mx-auto px-10 py-10">
       <h1 className="text-3xl font-bold mb-6 ml-[100px]">My Profile</h1>
+      <h1 className="text-3xl font-bold mb-6 ml-[100px]">My Profile</h1>
       <div className="flex justify-center space-x-8">
         {/* Sidebar */}
         <nav className="mt-8">
           <ul className="space-y-4">
             {[
               { href: "/", label: "Home", icon: "home", active: true },
-              { href: "/edit-profile", label: "Edit Profile", icon: "edit" },
-              { href: "/my-recipes", label: "My Recipes", icon: "work" },
-              {
-                href: "/reset-password",
-                label: "Reset Password",
-                icon: "lock",
-              },
-              { href: "/save", label: "Save", icon: "save" },
+              { href: "/edit-profile", label: "Edit Profile", icon: "edit", active: false },
+              { href: "/my-recipes", label: "My Recipes", icon: "work", active: false },
+              { href: "/reset-password", label: "Reset Password", icon: "lock", active: false },
+              { href: "/save", label: "Save", icon: "save", active: false },
             ].map(({ href, label, icon, active }) => (
               <li key={href}>
                 <Link
@@ -121,3 +118,4 @@ const Profile = async () => {
 };
 
 export default Profile;
+

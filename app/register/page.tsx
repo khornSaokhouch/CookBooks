@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useState } from "react";
 import { register } from "@/app/actions/actions";
@@ -17,7 +18,13 @@ export default function RegisterPage() {
     const formData = new FormData(event.currentTarget);
 
     try {
-      const result = await register(formData);
+      const response = await register(formData);
+
+      const result = response;
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
       if (result && result.error) {
         setError(result.error); // Display error message
@@ -25,8 +32,11 @@ export default function RegisterPage() {
         router.push("/login"); // Redirect to login page on success
       } else {
         setError("An unexpected error occurred. Please try again.");
+        setError("An unexpected error occurred. Please try again.");
       }
     } catch (error) {
+      console.error("Registration error:", error);
+      setError("An unexpected error occurred. Please try again.");
       console.error("Registration error:", error);
       setError("An unexpected error occurred. Please try again.");
     } finally {
@@ -37,6 +47,9 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          Create Your Account
+        </h1>
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
           Create Your Account
         </h1>
@@ -65,6 +78,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
+            {/* <label
+              htmlFor="email"
+              className="block text-gray-700 font-medium mb-2"
+            > */}
             <label
               htmlFor="email"
               className="block text-gray-700 font-medium mb-2"
@@ -82,6 +99,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
+            {/* <label
+              htmlFor="password"
+              className="block text-gray-700 font-medium mb-2"
+            > */}
             <label
               htmlFor="password"
               className="block text-gray-700 font-medium mb-2"
@@ -105,12 +126,16 @@ export default function RegisterPage() {
           >
             {isLoading ? "Registering..." : "Register"}{" "}
             {/* Show loading text */}
+            {isLoading ? "Registering..." : "Register"}{" "}
+            {/* Show loading text */}
           </button>
         </form>
 
         <p className="mt-6 text-center text-gray-600">
           Already have an account?{" "}
+          Already have an account?{" "}
           <a href="/login" className="text-blue-500 hover:underline">
+            Log in
             Log in
           </a>
         </p>
@@ -118,3 +143,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

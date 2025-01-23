@@ -8,7 +8,7 @@ import Image from "next/image";
 // Fetch events from the database
 async function getEvents() {
   try {
-    const events = await query("SELECT * FROM events", []);
+    const events = await query("SELECT * FROM events", []) as any[];
     return events;
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -17,7 +17,7 @@ async function getEvents() {
 }
 
 export default async function EventsPage() {
-  const userCookie = cookies().get("user");
+  const userCookie = (await cookies()).get("user");
 
   // Redirect if user is not logged in
   if (!userCookie) {

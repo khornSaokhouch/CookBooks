@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { query } from "@/app/db";
+import { query } from "@/app/lib/db";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {

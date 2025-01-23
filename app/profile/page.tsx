@@ -5,7 +5,7 @@ import Profile from "../components/Profile";
 
 export default async function ProfilePage() {
   const cookieStore = cookies();
-  const userCookie = cookieStore.get("user")?.value;
+  const userCookie = (await cookieStore).get("user")?.value;
   const user = userCookie ? JSON.parse(userCookie) : null;
 
   return (

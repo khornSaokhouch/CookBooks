@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import { getUserById } from "@/app/actions/userActions"; // Assuming you have this function to get user data
@@ -18,7 +18,7 @@ export default function Navbar({ user }: NavbarProps) {
     const fetchUserData = async () => {
       if (user && user.id) {
         try {
-          const userData = await getUserById(user.id); // Fetch user data
+          const userData = await getUserById(Number(user.id)); // Fetch user data
           setImageUrl(userData?.image_url || "/default-avatar.png"); // Update imageUrl state
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -53,13 +53,22 @@ export default function Navbar({ user }: NavbarProps) {
               </Link>
             </div>
             <div className="hidden md:flex space-x-10 text-lg">
-              <Link href="/" className="text-gray-600 hover:text-blue-600 font-medium">
+              <Link
+                href="/"
+                className="text-gray-600 hover:text-blue-600 font-medium"
+              >
                 Home
               </Link>
-              <Link href="/recipe" className="text-gray-600 hover:text-blue-600 font-medium">
+              <Link
+                href="/recipe"
+                className="text-gray-600 hover:text-blue-600 font-medium"
+              >
                 Recipe
               </Link>
-              <Link href="/about-us" className="text-gray-600 hover:text-blue-600 font-medium">
+              <Link
+                href="/about-us"
+                className="text-gray-600 hover:text-blue-600 font-medium"
+              >
                 About Us
               </Link>
             </div>
@@ -81,7 +90,9 @@ export default function Navbar({ user }: NavbarProps) {
                 {isLoggedIn ? (
                   <>
                     <Link href="/save" className="hover:text-gray-700">
-                      <span className="material-icons text-gray-600 w-5 h-5">bookmark_border</span>
+                      <span className="material-icons text-gray-600 w-5 h-5">
+                        bookmark_border
+                      </span>
                     </Link>
                     {/* Profile link */}
                     <Link href="/profile">
@@ -116,25 +127,46 @@ export default function Navbar({ user }: NavbarProps) {
       </nav>
       <div className="text-lg">
         <ul className="space-x-10 ml-[180px] py-4">
-          <Link href="/event" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/event"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Event
           </Link>
-          <Link href="/popular" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/popular"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Popular
           </Link>
-          <Link href="/soup" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/soup"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Soup
           </Link>
-          <Link href="/stir-frieds" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/stir-frieds"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Stir Frieds
           </Link>
-          <Link href="/occasions" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/occasions"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Occasions
           </Link>
-          <Link href="/drinks" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/drinks"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Drinks
           </Link>
-          <Link href="/dessert" className="text-gray-600 hover:text-blue-600 font-medium">
+          <Link
+            href="/dessert"
+            className="text-gray-600 hover:text-blue-600 font-medium"
+          >
             Dessert
           </Link>
         </ul>
