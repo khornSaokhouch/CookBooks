@@ -118,9 +118,7 @@ const Edit: React.FC = () => {
           <form onSubmit={handleSubmit} className="px-10 py-6">
             <div className="flex space-x-16">
               <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2">
-                  Name
-                </label>
+                <label className="block text-sm font-semibold mb-2">Name</label>
                 <input
                   type="text"
                   ref={firstNameRef}
@@ -153,13 +151,13 @@ const Edit: React.FC = () => {
               />
             </div>
             <div className="flex justify-end mt-4">
-    <button
-        type="submit"
-        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-    >
-        Update Profile
-    </button>
-</div>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Update Profile
+              </button>
+            </div>
           </form>
         </div>
       </div>
