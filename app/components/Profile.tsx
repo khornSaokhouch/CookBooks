@@ -1,38 +1,88 @@
-// components/Profile.tsx
-import Image from 'next/image';
-import Link from 'next/link';
-import { cookies } from 'next/headers';
+import Image from "next/image";
+import Link from "next/link";
+import { cookies } from "next/headers";
+import { query } from "@/app/lib/db"; // Import your database query function
+import ProfileImageModal from "./ProfileImageModal"; // Import the Client Component
 
 interface User {
-  name: string;
+  user_id: number;
+  user_name: string;
   email: string;
-  hobbies: string[];
+  about_me: string;
+  image_url: string; // Ensure this field exists in your database
 }
 
-const Profile: React.FC = async () => {
-  // Await the cookies() call to get user data
-  const userCookie = await cookies().get('user');
-  const user: User | null = userCookie ? JSON.parse(userCookie.value) : null;
+const Profile = async () => {
+  // Get the user ID from the cookie
+  const userCookie = cookies().get("user"); // Await the cookies() function
+  console.log("User cookie:", userCookie); // Debug log
+
+  let userData = null;
+  try {
+    if (userCookie) {
+      userData = JSON.parse(userCookie.value); // Parse the cookie value
+      console.log("User data from cookie:", userData); // Debug log
+    } else {
+      console.log("No user cookie found."); // Debug log
+    }
+  } catch (err) {
+    console.error("Failed to parse user cookie:", err); // Debug log
+    return <p className="text-red-500">Invalid user data. Please log in again.</p>;
+  }
+
+  let user: User | null = null;
+  let error: string | null = null;
+
+  if (userData) {
+    try {
+      console.log("Fetching user data from MySQL..."); // Debug log
+      const users = (await query(
+        "SELECT * FROM user WHERE user_id = ?",
+        [userData.id]
+      )) as User[];
+      console.log("Query result:", users); // Debug log
+
+      if (users.length > 0) {
+        user = users[0];
+        console.log("User found:", user); // Debug log
+      } else {
+        console.log("User not found in the database."); // Debug log
+        error = "User not found.";
+      }
+    } catch (err) {
+      console.error("Failed to fetch user data:", err); // Debug log
+      error = "Failed to fetch user data. Please try again later.";
+    }
+  } else {
+    console.log("No user data found in cookies."); // Debug log
+    error = "No user data found. Please log in.";
+  }
 
   return (
     <div className="container mx-auto px-10 py-10">
-      <h1 className="text-3xl font-bold mb-6 ml-[100px] ">My Profile</h1>
+      <h1 className="text-3xl font-bold mb-6 ml-[100px]">My Profile</h1>
       <div className="flex justify-center space-x-8">
         {/* Sidebar */}
         <nav className="mt-8">
           <ul className="space-y-4">
             {[
-              { href: "/", label: "Home", icon: "home", active: true  },
+              { href: "/", label: "Home", icon: "home", active: true },
               { href: "/edit-profile", label: "Edit Profile", icon: "edit" },
-              { href: "/my-recipes", label: "My Recipes", icon: "work"},
-              { href: "/reset-password", label: "Reset Password", icon: "lock" },
+              { href: "/my-recipes", label: "My Recipes", icon: "work" },
+              {
+                href: "/reset-password",
+                label: "Reset Password",
+                icon: "lock",
+              },
               { href: "/save", label: "Save", icon: "save" },
             ].map(({ href, label, icon, active }) => (
               <li key={href}>
                 <Link
                   href={href}
                   className={`flex items-center px-6 py-3 rounded-lg ${
-                    active ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-200"
+                    active
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   <span className="material-icons mr-3">{icon}</span>
@@ -44,35 +94,26 @@ const Profile: React.FC = async () => {
         </nav>
         {/* Profile Information */}
         <div className="w-3/4 bg-white rounded-lg shadow-lg flex flex-col p-4">
-          {user ? (
-            <div className="flex items-center p-6">
-              <Image
-                src="/profile.png" // Replace with the path to the user's image
-                alt="User Avatar"
-                width={100}
-                height={100}
-                className="rounded-full border-2 border-blue-500"
-              />
-              <div className="ml-4">
-                <h1 className="text-2xl font-bold">{user.name}</h1>
-                <p className="text-gray-600">{user.email}</p>
+          {error ? (
+            <p className="text-red-500">{error}</p>
+          ) : user ? (
+            <>
+              <div className="flex items-center p-6">
+                {/* Use the ProfileImageModal component */}
+                <ProfileImageModal imageUrl={user.image_url} />
+                <div className="ml-4">
+                  <h1 className="text-2xl font-bold">{user.user_name}</h1>
+                  <p className="text-gray-600">{user.email}</p>
+                </div>
               </div>
-            </div>
+              <h2 className="text-2xl font-semibold mt-4 px-10">About Me</h2>
+              <p className="mt-2 px-10">
+                {user.about_me || "No information available."}
+              </p>
+            </>
           ) : (
             <p className="text-gray-700">Loading user information...</p>
           )}
-          <h2 className="text-2xl font-semibold mt-4 px-10 ">About Me</h2>
-          <p className="mt-2 text-center">
-            Hello everyone, my name is {user?.name || 'User'}. It's a pleasure to meet you all! 
-            A little bit about myself: I am [age] years old and currently work as [your job/occupation]. 
-            In my free time, I enjoy {user?.hobbies && user.hobbies.length > 0 ? user.hobbies.join(', ') : 'various activities'}.
-          </p>
-          <p className="mt-2 ">
-            I'm excited to be here today and look forward to the pleasure of interaction—getting to know everyone, 
-            learning new things, and collaborating on projects. Please feel free to ask me any questions you may have— 
-            I'm always happy to chat and share a bit more about myself.
-          </p>
-          <p className="mt-2 ">Thank you for your time, and I look forward to our discussions!</p>
         </div>
       </div>
     </div>

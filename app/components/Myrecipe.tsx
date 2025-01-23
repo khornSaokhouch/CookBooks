@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -14,11 +14,11 @@ export default function MyRecipe() {
     const fetchRecipes = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/recipes'); // Replace with your API endpoint
+        const response = await fetch('/api/recipes'); // Call your API endpoint
         const data = await response.json();
         setRecipes(data);
       } catch (error) {
-        console.error("Error fetching recipes:", error);
+        console.error('Error fetching recipes:', error);
       } finally {
         setLoading(false);
       }
@@ -37,10 +37,10 @@ export default function MyRecipe() {
   // Delete a recipe
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`/api/recipes/${id}`, { method: 'DELETE' }); // Replace with your API endpoint
+      await fetch(`/api/recipes/${id}`, { method: 'DELETE' }); // Call your API endpoint
       setRecipes(recipes.filter((recipe) => recipe.id !== id));
     } catch (error) {
-      console.error("Error deleting recipe:", error);
+      console.error('Error deleting recipe:', error);
     }
   };
 
@@ -52,16 +52,18 @@ export default function MyRecipe() {
         <nav className="mt-8">
           <ul className="space-y-4">
             {[
-              { href: "/profile", label: "Home", icon: "home" },
-              { href: "/edit-profile", label: "Edit Profile", icon: "edit" },
-              { href: "/my-recipes", label: "My Recipes", icon: "work", active: true },
-              { href: "/reset-password", label: "Reset Password", icon: "lock" },
-              { href: "/save", label: "Save", icon: "save" },
+              { href: '/profile', label: 'Home', icon: 'home' },
+              { href: '/edit-profile', label: 'Edit Profile', icon: 'edit' },
+              { href: '/my-recipes', label: 'My Recipes', icon: 'work', active: true },
+              { href: '/reset-password', label: 'Reset Password', icon: 'lock' },
+              { href: '/save', label: 'Save', icon: 'save' },
             ].map(({ href, label, icon, active }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`flex items-center px-6 py-3 rounded-lg ${active ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-200"}`}
+                  className={`flex items-center px-6 py-3 rounded-lg ${
+                    active ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'
+                  }`}
                 >
                   <span className="material-icons mr-3">{icon}</span>
                   {label}

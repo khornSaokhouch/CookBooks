@@ -1,7 +1,7 @@
 // app/events/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { query } from "@/app/db";
+import { query } from "@/app/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -102,7 +102,10 @@ export default async function EventsPage() {
         </header>
 
         <h1 className="text-2xl font-semibold mb-4">Events Management</h1>
-        <p>Manage events here. This section will allow you to create, update, or delete events.</p>
+        <p>
+          Manage events here. This section will allow you to create, update, or
+          delete events.
+        </p>
 
         {/* Add Event Button */}
         <div className="flex mt-8 items-center justify-center bg-gray-100 p-6 rounded-lg border-dashed border-2 border-gray-300 w-[500px] h-[200px]">

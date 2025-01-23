@@ -1,7 +1,6 @@
-// app/dashboard/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { query } from "@/app/db";
+import { query } from "@/app/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -24,7 +23,9 @@ async function getDashboardStats() {
 }
 
 export default async function Dashboard() {
-  const userCookie = cookies().get("user");
+  // Ensure you await cookies() here
+  const cookieStore = await cookies();
+  const userCookie = cookieStore.get("user");
 
   // Redirect if user is not logged in
   if (!userCookie) {
@@ -164,27 +165,29 @@ export default async function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Recipe Category</h2>
             <div className="flex justify-between items-center">
               <div className="flex space-x-4 overflow-x-auto">
-                {["Soup", "Stir Fried", "Drinks", "Desserts"].map((category) => (
-                  <div
-                    key={category}
-                    className="bg-white rounded-lg shadow-md p-4 text-center"
-                  >
-                    <Image
-                      src="/soup.png"
-                      alt={category}
-                      width={48}
-                      height={48}
-                      className="mx-auto mb-2"
-                    />
-                    <h3 className="font-medium">{category}</h3>
-                    <Link
-                      href={`/recipes?category=${category.toLowerCase()}`}
-                      className="text-blue-600 hover:underline"
+                {["Soup", "Stir Fried", "Drinks", "Desserts"].map(
+                  (category) => (
+                    <div
+                      key={category}
+                      className="bg-white rounded-lg shadow-md p-4 text-center"
                     >
-                      View All
-                    </Link>
-                  </div>
-                ))}
+                      <Image
+                        src="/soup.png"
+                        alt={category}
+                        width={48}
+                        height={48}
+                        className="mx-auto mb-2"
+                      />
+                      <h3 className="font-medium">{category}</h3>
+                      <Link
+                        href={`/recipes?category=${category.toLowerCase()}`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        View All
+                      </Link>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </section>

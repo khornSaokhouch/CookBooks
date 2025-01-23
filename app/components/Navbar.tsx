@@ -1,20 +1,48 @@
-import Link from "next/link";
-import { cookies } from "next/headers";
-import { logout } from "@/app/actions";
+"use client"
 
-export default async function Navbar() {
-  const cookieStore = cookies(); // Await the cookies() API
-  const userCookie = cookieStore.get("user"); // Use the cookie store to get the user cookie
-  const user = userCookie ? JSON.parse(userCookie.value) : null;
-  const isLoggedIn = !!user; // Check if user is logged in
+import { useEffect, useState } from "react";
+import { getUserById } from "@/app/actions/userActions"; // Assuming you have this function to get user data
+import { logout } from "@/app/actions/actions"; // Import logout function
+import Link from "next/link";
+
+interface NavbarProps {
+  user: { id: string; image_url?: string } | null;
+}
+
+export default function Navbar({ user }: NavbarProps) {
+  const isLoggedIn = !!user;
+  const [imageUrl, setImageUrl] = useState<string | null>(null); // Local state for image_url
+
+  useEffect(() => {
+    // Fetch user data (including image_url) if the user is logged in
+    const fetchUserData = async () => {
+      if (user && user.id) {
+        try {
+          const userData = await getUserById(user.id); // Fetch user data
+          setImageUrl(userData?.image_url || "/default-avatar.png"); // Update imageUrl state
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setImageUrl("/default-avatar.png"); // Fallback if error occurs
+        }
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchUserData(); // Call async function to fetch user data
+    }
+  }, [isLoggedIn, user]); // Dependency array, re-run when 'user' or 'isLoggedIn' changes
+
+  const handleLogout = async (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+    await logout(); // Call the logout function
+    // Optionally, handle additional logic after logout, like redirecting or updating the UI
+  };
 
   return (
     <div className="div">
       <nav className="shadow-md">
-        {/* Main Navigation */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-[110px]">
-            {/* Logo Section */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
                 <img
@@ -24,32 +52,18 @@ export default async function Navbar() {
                 />
               </Link>
             </div>
-
-            {/* Navigation Links */}
             <div className="hidden md:flex space-x-10 text-lg">
-              <Link
-                href="/"
-                className="text-gray-600 hover:text-blue-600 font-medium"
-              >
+              <Link href="/" className="text-gray-600 hover:text-blue-600 font-medium">
                 Home
               </Link>
-              <Link
-                href="/recipe"
-                className="text-gray-600 hover:text-blue-600 font-medium"
-              >
+              <Link href="/recipe" className="text-gray-600 hover:text-blue-600 font-medium">
                 Recipe
               </Link>
-              <Link
-                href="/about-us"
-                className="text-gray-600 hover:text-blue-600 font-medium"
-              >
+              <Link href="/about-us" className="text-gray-600 hover:text-blue-600 font-medium">
                 About Us
               </Link>
             </div>
-
-            {/* Right Section - Search Bar and Profile/Login */}
             <div className="flex items-center space-x-20">
-              {/* Search Bar */}
               <div className="relative flex items-center">
                 <input
                   type="text"
@@ -57,37 +71,28 @@ export default async function Navbar() {
                   placeholder="Search by name"
                 />
               </div>
-
-              {/* Add Recipe Button */}
               <Link
                 href={isLoggedIn ? "/add-recipe" : "/login"}
                 className="text-lg font-medium text-blue-600 hover:text-blue-800"
               >
                 + Add a Recipe
               </Link>
-
-              {/* Profile or Login Button */}
               <div className="flex items-center space-x-4">
-                {isLoggedIn && (
+                {isLoggedIn ? (
                   <>
-                    {/* Save/Favorites Button - Only for Logged-in Users */}
                     <Link href="/save" className="hover:text-gray-700">
-                      <span className="material-icons text-gray-600 w-5 h-5">
-                        bookmark_border
-                      </span>
+                      <span className="material-icons text-gray-600 w-5 h-5">bookmark_border</span>
                     </Link>
-
-                    {/* Profile Avatar */}
+                    {/* Profile link */}
                     <Link href="/profile">
                       <img
-                        src={user?.avatar || "/default-avatar.png"} // Use optional chaining
+                        src={imageUrl || "/default-avatar.png"} // Use the imageUrl state here
                         alt="Profile"
                         className="w-10 h-10 rounded-full border border-gray-300"
                       />
                     </Link>
-
-                    {/* Logout Button */}
-                    <form action={logout}>
+                    {/* Logout form */}
+                    <form onSubmit={handleLogout}>
                       <button
                         type="submit"
                         className="bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 transition"
@@ -96,10 +101,7 @@ export default async function Navbar() {
                       </button>
                     </form>
                   </>
-                )}
-
-                {!isLoggedIn && (
-                  // Login Button for Guests
+                ) : (
                   <Link
                     href="/login"
                     className="bg-blue-500 text-white px-4 py-2 rounded-full text-lg hover:bg-blue-600 transition"
@@ -112,50 +114,27 @@ export default async function Navbar() {
           </div>
         </div>
       </nav>
-
-      {/* Secondary Navigation Links */}
       <div className="text-lg">
         <ul className="space-x-10 ml-[180px] py-4">
-          <Link
-            href="/event"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/event" className="text-gray-600 hover:text-blue-600 font-medium">
             Event
           </Link>
-          <Link
-            href="/popular"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/popular" className="text-gray-600 hover:text-blue-600 font-medium">
             Popular
           </Link>
-          <Link
-            href="/soup"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/soup" className="text-gray-600 hover:text-blue-600 font-medium">
             Soup
           </Link>
-          <Link
-            href="/stir-frieds"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/stir-frieds" className="text-gray-600 hover:text-blue-600 font-medium">
             Stir Frieds
           </Link>
-          <Link
-            href="/occasions"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/occasions" className="text-gray-600 hover:text-blue-600 font-medium">
             Occasions
           </Link>
-          <Link
-            href="/drinks"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/drinks" className="text-gray-600 hover:text-blue-600 font-medium">
             Drinks
           </Link>
-          <Link
-            href="/dessert"
-            className="text-gray-600 hover:text-blue-600 font-medium"
-          >
+          <Link href="/dessert" className="text-gray-600 hover:text-blue-600 font-medium">
             Dessert
           </Link>
         </ul>

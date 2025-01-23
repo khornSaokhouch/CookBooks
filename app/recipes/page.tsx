@@ -1,7 +1,7 @@
 // app/recipes/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { query } from "@/app/db";
+import { query } from "@/app/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -71,7 +71,12 @@ export default async function RecipesPage() {
               { href: "/", label: "Home", icon: "home" },
               { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
               { href: "/users", label: "Users", icon: "people" },
-              { href: "/recipes", label: "Recipes", icon: "restaurant_menu", active: true },
+              {
+                href: "/recipes",
+                label: "Recipes",
+                icon: "restaurant_menu",
+                active: true,
+              },
               { href: "/events", label: "Events", icon: "event" },
             ].map(({ href, label, icon }) => (
               <li key={href}>

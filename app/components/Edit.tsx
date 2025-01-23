@@ -1,79 +1,132 @@
-"use client"; // Add this line to designate the component as a Client Component
+'use client'; // Designate the component as a Client Component
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
+import { getUserById, updateUser } from '@/app/actions/userActions';
+import Link from 'next/link'; // Import Link for navigation
 
 interface User {
-  name: string;
+  user_id: number;
+  user_name: string;
   email: string;
-  hobbies: string[];
+  about_me?: string;
+  image_url?: string;
 }
 
-const Edit: React.FC = () => {
+const EditProfile = () => {
   // State to hold user data
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // State to control the confirmation modal
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // Refs for form fields
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const aboutMeRef = useRef<HTMLTextAreaElement>(null);
+  const imageUrlRef = useRef<HTMLInputElement>(null);
 
+  // Fetch user data on component mount
   useEffect(() => {
-    // Get the user data from localStorage on the client side
-    const userDataString = localStorage.getItem("user");
-    const userData: User | null = userDataString
-      ? JSON.parse(userDataString)
-      : null;
+    const fetchUserData = async () => {
+      try {
+        const userId = 1; // Replace with the actual user ID
+        const userData = await getUserById(userId);
+        if (userData) {
+          setUser(userData);
+        } else {
+          setError('User not found.');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to fetch user data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (userData) {
-      setUser(userData);
-    } else {
-      setUser(null);
-    }
-    setLoading(false);
-  }, []); // Empty dependency array to run only once when the component mounts
+    fetchUserData();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     // Get values from refs
-    const firstName = firstNameRef.current?.value;
-    const lastName = lastNameRef.current?.value;
+    const name = nameRef.current?.value;
     const email = emailRef.current?.value;
     const aboutMe = aboutMeRef.current?.value;
+    const imageUrl = imageUrlRef.current?.value;
 
-    // Handle profile update logic here
-    console.log({
-      firstName,
-      lastName,
-      email,
-      aboutMe,
-    });
+    // Validate inputs
+    if (!name || !email) {
+      alert('Name and email are required.');
+      return;
+    }
+
+    // Show the confirmation modal
+    setShowModal(true);
   };
+
+  const handleConfirmUpdate = async () => {
+    // Get values from refs
+    const name = nameRef.current?.value;
+    const email = emailRef.current?.value;
+    const aboutMe = aboutMeRef.current?.value;
+    const imageUrl = imageUrlRef.current?.value;
+
+    if (!user) {
+      alert('No user data available.');
+      return;
+    }
+
+    // Create updated user object
+    const updatedUser: User = {
+      user_id: user.user_id,
+      user_name: name || '',
+      email: email || '',
+      about_me: aboutMe || '',
+      image_url: imageUrl || '',
+    };
+
+    try {
+      // Update user data using Server Action
+      const result = await updateUser(updatedUser.user_id, updatedUser);
+      alert(result.message);
+      setShowModal(false); // Close the modal
+
+      // Refresh the page to reflect the updated data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('An error occurred while updating the profile.');
+    }
+  };
+
+  const handleCancelUpdate = () => {
+    setShowModal(false); // Close the modal without saving
+  };
+
+  if (loading) {
+    return <p className="text-gray-700 text-center mt-8">Loading user information...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500 text-center mt-8">{error}</p>;
+  }
 
   return (
     <div className="container mx-auto px-10 py-10">
       <h1 className="text-3xl font-bold mb-6 ml-[100px]">My Profile</h1>
       <div className="flex justify-center space-x-8">
-        {/* Sidebar */}
+        {/* Sidebar Navigation */}
         <nav className="mt-8">
           <ul className="space-y-4">
             {[
               { href: "/profile", label: "Home", icon: "home" },
-              {
-                href: "/edit-profile",
-                label: "Edit Profile",
-                icon: "edit",
-                active: true,
-              },
+              { href: "/edit-profile", label: "Edit Profile", icon: "edit", active: true },
               { href: "/my-recipes", label: "My Recipes", icon: "work" },
-              {
-                href: "/reset-password",
-                label: "Reset Password",
-                icon: "lock",
-              },
+              { href: "/reset-password", label: "Reset Password", icon: "lock" },
               { href: "/save", label: "Save", icon: "save" },
             ].map(({ href, label, icon, active }) => (
               <li key={href}>
@@ -92,21 +145,18 @@ const Edit: React.FC = () => {
             ))}
           </ul>
         </nav>
+
         {/* Profile Information */}
         <div className="w-3/4 bg-white rounded-lg shadow-lg flex flex-col p-4">
-          {loading ? (
-            <p className="text-gray-700">Loading user information...</p>
-          ) : user ? (
+          {user ? (
             <div className="flex items-center p-6">
-              <Image
-                src="/profile.png" // Replace with the path to the user's image
+              <img
+                src={user.image_url || '/default-profile.png'} // Fallback image
                 alt="User Avatar"
-                width={100}
-                height={100}
-                className="rounded-full border-2 border-blue-500"
+                className="rounded-full border-2 border-blue-500 w-24 h-24 object-cover"
               />
               <div className="ml-4">
-                <h1 className="text-2xl font-bold">{user.name}</h1>
+                <h1 className="text-2xl font-bold">{user.user_name}</h1>
                 <p className="text-gray-600">{user.email}</p>
               </div>
             </div>
@@ -116,17 +166,15 @@ const Edit: React.FC = () => {
           <h2 className="text-2xl font-semibold mt-4 px-10">Edit Profile</h2>
 
           <form onSubmit={handleSubmit} className="px-10 py-6">
-            <div className="flex space-x-16">
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2">Name</label>
-                <input
-                  type="text"
-                  ref={firstNameRef}
-                  className="w-[450px] border border-gray-300 rounded-md p-2 "
-                  required
-                  defaultValue={user?.name} // Pre-fill the form fields if user data exists
-                />
-              </div>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2">Name</label>
+              <input
+                type="text"
+                ref={nameRef}
+                className="w-full border border-gray-300 rounded-md p-2"
+                required
+                defaultValue={user?.user_name} // Pre-fill the name field
+              />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-semibold mb-2">Email</label>
@@ -135,7 +183,7 @@ const Edit: React.FC = () => {
                 ref={emailRef}
                 className="w-full border border-gray-300 rounded-md p-2"
                 required
-                defaultValue={user?.email} // Pre-fill email field
+                defaultValue={user?.email} // Pre-fill the email field
               />
             </div>
             <div className="mb-4">
@@ -147,8 +195,20 @@ const Edit: React.FC = () => {
                 className="w-full border border-gray-300 rounded-md p-2"
                 placeholder="Tell us about yourself"
                 rows={4}
-                defaultValue={user ? "Your current description goes here" : ""} // Pre-fill About Me field
+                defaultValue={user?.about_me || ''} // Pre-fill the About Me field
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2">
+                Profile Image URL
+              </label>
+              <input
+  type="text"
+  ref={imageUrlRef}
+  className="w-full border border-gray-300 rounded-md p-2"
+  placeholder="Enter image URL"
+  defaultValue={user?.image_url || ''} // Pre-fill the image URL field
+/>
             </div>
             <div className="flex justify-end mt-4">
               <button
@@ -161,8 +221,32 @@ const Edit: React.FC = () => {
           </form>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Confirm Update</h2>
+            <p>Are you sure you want to update your profile?</p>
+            <div className="flex justify-end mt-4 space-x-4">
+              <button
+                onClick={handleCancelUpdate}
+                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmUpdate}
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Edit;
+export default EditProfile;

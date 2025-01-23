@@ -1,7 +1,7 @@
 // app/users/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { query } from "@/app/db";
+import { query } from "@/app/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -103,7 +103,10 @@ export default async function UsersPage() {
 
         {/* Page Title */}
         <h1 className="text-2xl font-semibold mb-4">Users Management</h1>
-        <p>Manage users here. This section will allow you to add, edit, or remove users in the system.</p>
+        <p>
+          Manage users here. This section will allow you to add, edit, or remove
+          users in the system.
+        </p>
 
         {/* Users Table */}
         <div className="overflow-x-auto mt-6">
@@ -150,7 +153,10 @@ export default async function UsersPage() {
                       Edit
                     </Link>
                     <span className="mx-2">|</span>
-                    <form action={`/api/users/delete?id=${user.id}`} method="POST">
+                    <form
+                      action={`/api/users/delete?id=${user.id}`}
+                      method="POST"
+                    >
                       <button
                         type="submit"
                         className="text-red-600 hover:underline"
