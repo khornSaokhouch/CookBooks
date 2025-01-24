@@ -8,7 +8,11 @@ import Image from "next/image";
 // Fetch recipe categories from the database
 async function getCategories() {
   try {
-    const categories = await query("SELECT * FROM categories", []);
+    const categories = (await query("SELECT * FROM category", [])) as {
+      id: number;
+      name: string;
+      image: string;
+    }[]; // Fetch categories from the database
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -19,7 +23,11 @@ async function getCategories() {
 // Fetch occasions from the database
 async function getOccasions() {
   try {
-    const occasions = await query("SELECT * FROM occasions", []);
+    const occasions = (await query("SELECT * FROM occasions", [])) as {
+      id: number;
+      name: string;
+      image: string;
+    }[];
     return occasions;
   } catch (error) {
     console.error("Error fetching occasions:", error);
@@ -28,7 +36,7 @@ async function getOccasions() {
 }
 
 export default async function RecipesPage() {
-  const userCookie = cookies().get("user");
+  const userCookie = (await cookies()).get("user");
 
   // Redirect if user is not logged in
   if (!userCookie) {

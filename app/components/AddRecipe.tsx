@@ -61,25 +61,40 @@ const AddRecipe = () => {
       setIsModalOpen(true);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    const formData = {
-      recipeTitle,
-      description,
-      preparationTime,
-      cookTime,
-      ingredients,
-      instructions,
-      preparationInstructions,
-      note,
-      resultImages,
-      bannerImage,
-      ingredientsImage,
-    };
-
-    console.log("Form Data:", formData);
-    // TODO: Handle form submission
+  
+    const formData = new FormData();
+    formData.append("recipeTitle", recipeTitle);
+    formData.append("description", description);
+    formData.append("preparationTime", preparationTime);
+    formData.append("cookTime", cookTime);
+    formData.append("ingredients", ingredients);
+    formData.append("instructions", instructions);
+    formData.append("preparationInstructions", preparationInstructions);
+    formData.append("note", note);
+    resultImages.forEach((image, index) => {
+      if (image) formData.append(`resultImages[${index}]`, image);
+    });
+    if (bannerImage) formData.append("bannerImage", bannerImage);
+    if (ingredientsImage) formData.append("ingredientsImage", ingredientsImage);
+  
+    try {
+      const response = await fetch("/api/recipes", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        console.log("Recipe added successfully!");
+        // Optionally, redirect or show a success message
+      } else {
+        console.error("Failed to add recipe:", result.error);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (

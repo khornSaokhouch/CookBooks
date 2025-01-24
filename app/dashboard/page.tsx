@@ -7,9 +7,11 @@ import Image from "next/image";
 // Fetch dashboard stats
 async function getDashboardStats() {
   try {
-    const [userCountResult, recipeCountResult] = await Promise.all([
-      query("SELECT COUNT(*) as count FROM users", []),
-      query("SELECT COUNT(*) as count FROM recipes", []),
+    const [userCountResult, recipeCountResult]: any = await Promise.all([
+      query("SELECT COUNT(*) as count FROM user", []),
+      query("SELECT COUNT(*) as count FROM recipe", []),
+      query("SELECT COUNT(*) as count FROM event", []),
+      query("SELECT COUNT(*) as count FROM category", []),
     ]);
 
     return {
@@ -41,7 +43,7 @@ export default async function Dashboard() {
   }
 
   // Redirect if user is not an admin
-  if (!user.is_admin) {
+  if (user.role !== "Admin") {
     redirect("/");
   }
 
